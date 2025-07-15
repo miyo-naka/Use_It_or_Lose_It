@@ -26,19 +26,19 @@ class QuizController extends Controller
                 // 正解率が高い単語（80%以上）または未回答の単語
                 $query->where(function ($q) {
                     $q->whereDoesntHave('mistakes')
-                      ->orWhereHas('mistakes', function ($subQ) {
-                          $subQ->select(DB::raw('word_id, AVG(correct) as avg_correct'))
-                               ->groupBy('word_id')
-                               ->having('avg_correct', '>=', 0.8);
-                      });
+                        ->orWhereHas('mistakes', function ($subQ) {
+                            $subQ->select(DB::raw('word_id, AVG(correct) as avg_correct'))
+                                ->groupBy('word_id')
+                                ->having('avg_correct', '>=', 0.8);
+                        });
                 });
                 break;
             case 'hard':
                 // 正解率が低い単語（50%未満）
                 $query->whereHas('mistakes', function ($q) {
                     $q->select(DB::raw('word_id, AVG(correct) as avg_correct'))
-                      ->groupBy('word_id')
-                      ->having('avg_correct', '<', 0.5);
+                        ->groupBy('word_id')
+                        ->having('avg_correct', '<', 0.5);
                 });
                 break;
             default:
@@ -51,7 +51,7 @@ class QuizController extends Controller
         // 各単語に対して選択肢を生成
         $quizQuestions = $words->map(function ($word) {
             $choices = $this->generateChoices($word);
-            
+
             return [
                 'id' => $word->id,
                 'word' => $word->word,
@@ -100,8 +100,10 @@ class QuizController extends Controller
     public function getProgress(): JsonResponse
     {
         $totalWords = Word::count();
-        $wordsWithMistakes = Word::whereHas('mistakes')->count();
-        $wordsWithoutMistakes = $totalWords - $wordsWithMistakes;
+        $wordsWithMistakes = Word::whereHas('mistakes', function ($q) {
+            $q->where('correct', false);
+        })->count();
+        $wordsWithoutMistakes = Word::whereDoesntHave('mistakes')->count();
 
         // 正解率別の単語数
         $progressByRate = Word::with('mistakes')
@@ -119,7 +121,7 @@ class QuizController extends Controller
         // 最近間違えた単語（過去7日間）
         $recentMistakes = Word::whereHas('mistakes', function ($query) {
             $query->where('correct', false)
-                  ->where('attempted_at', '>=', now()->subDays(7));
+                ->where('attempted_at', '>=', now()->subDays(7));
         })->with('mistakes')->get();
 
         return response()->json([
@@ -150,4 +152,4 @@ class QuizController extends Controller
 
         return $choices;
     }
-} 
+}
