@@ -30,10 +30,10 @@ export default function WordsPage() {
   }, []);
 
   return (
-    <section className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8 mt-8">
+    <section className="w-full max-w-4xl bg-white rounded-xl shadow-lg p-8 mt-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-indigo-700">単語一覧</h1>
-        <button className="px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition">
+        <button className="px-4 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">
           ＋ 単語追加
         </button>
       </div>
@@ -54,7 +54,8 @@ export default function WordsPage() {
             {words.map((word, i) => (
               <tr
                 key={word.id}
-                className={i % 2 === 0 ? "bg-white" : "bg-indigo-50/50"}
+                className={`border
+                  ${i % 2 === 0 ? "bg-white" : "bg-indigo-50/50"}`}
               >
                 <td className="border px-3 py-2 font-semibold text-indigo-700">
                   {word.word}
@@ -64,11 +65,11 @@ export default function WordsPage() {
                 <td className="border px-3 py-2 text-sm text-gray-500">
                   {word.example_sentence}
                 </td>
-                <td className="border px-3 py-2 flex gap-2">
-                  <button className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition text-xs">
+                <td className="px-3 py-2 flex gap-2">
+                  <button className="px-3 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition text-xs">
                     編集
                   </button>
-                  <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs">
+                  <button className="px-3 py-1 bg-pink-500 text-white rounded hover:bg-pink-600 transition text-xs">
                     削除
                   </button>
                 </td>
