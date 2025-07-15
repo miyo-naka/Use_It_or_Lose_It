@@ -1,2 +1,3 @@
 .env
 /docker/mysql/data/
+.vscode/settings.json

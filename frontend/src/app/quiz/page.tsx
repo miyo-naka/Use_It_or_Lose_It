@@ -1,6 +1,7 @@
 'use client';
 
 import { apiFetch } from '@/lib/api';
+import Link from 'next/link';
 import * as React from 'react';
 
 interface QuizQuestion {
@@ -59,7 +60,10 @@ export default function QuizPage() {
     <section className="w-full max-w-lg bg-white rounded-xl shadow-lg p-8 mt-8 flex flex-col items-center">
       <h1 className="text-2xl font-bold mb-4 text-indigo-700">クイズ終了！</h1>
       <div className="mb-4 text-lg">スコア: <span className="font-bold text-indigo-600">{score} / {questions.length}</span></div>
-      <a href="/quiz" className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition">もう一度挑戦</a>
+      <div className='flex gap-4'>
+      <Link href="/quiz" className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">もう一度挑戦</Link>
+        <Link href="/" className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">ホームへ</Link>
+      </div>
     </section>
   );
   if (!questions.length) return <div className="p-8">問題がありません</div>;
