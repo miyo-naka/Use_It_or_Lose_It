@@ -23,6 +23,8 @@ const rateColors: Record<string, string> = {
   "40%未満": "bg-red-400",
   未回答: "bg-gray-300",
 };
+const rateOrder = ["80%以上", "60-79%", "40-59%", "40%未満", "未回答"];
+
 
 export default function ProgressPage() {
   const [data, setData] = React.useState<ProgressData | null>(null);
@@ -45,51 +47,56 @@ export default function ProgressPage() {
 
   return (
     <section className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8 mt-8">
-      <h1 className="text-2xl font-bold mb-6 text-indigo-700">進捗</h1>
+      <h1 className="text-2xl font-bold mb-6 text-indigo-700">Progress</h1>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
         <div className="bg-indigo-50 rounded-lg p-4 text-center">
           <div className="text-3xl font-extrabold text-indigo-600">
             {data.total_words}
           </div>
-          <div className="text-gray-500 mt-1">総単語数</div>
+          <div className="text-gray-500 text-sm mt-1">総単語数</div>
         </div>
         <div className="bg-indigo-50 rounded-lg p-4 text-center">
           <div className="text-3xl font-extrabold text-indigo-600">
             {data.words_with_mistakes}
           </div>
-          <div className="text-gray-500 mt-1">間違い記録のある単語</div>
+          <div className="text-gray-500 text-sm mt-1">間違い記録のある単語</div>
         </div>
         <div className="bg-indigo-50 rounded-lg p-4 text-center">
           <div className="text-3xl font-extrabold text-indigo-600">
             {data.words_without_mistakes}
           </div>
-          <div className="text-gray-500 mt-1">未挑戦の単語</div>
+          <div className="text-gray-500 text-sm mt-1">未挑戦の単語</div>
         </div>
       </div>
+
       <h2 className="text-xl font-bold mt-6 mb-2 text-indigo-700">
         正解率分布
       </h2>
-      <div className="flex gap-8 mb-6">
-        {Object.entries(data.progress_by_rate).map(([label, count]) => (
-          <div key={label} className="flex flex-col items-center">
-            <div
-              className={`w-20 h-20 rounded-full mb-1 ${
-                rateColors[label] || "bg-gray-200"
-              }`}
-            ></div>
-            <div className="text-xs font-bold">{label}</div>
-            <div className="text-xs">{count}語</div>
-            <div className="w-8 h-2 bg-gray-200 rounded-full mt-1">
-              <div
-                className={`${
-                  rateColors[label] || "bg-gray-200"
-                } h-2 rounded-full`}
-                style={{ width: `${(count / total) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-        ))}
+<div className="flex gap-8 mb-8">
+  {rateOrder.map((label) => {
+    const count = data.progress_by_rate[label] ?? 0;
+    return (
+      <div key={label} className="flex flex-col items-center">
+        <div
+          className={`w-8 h-8 rounded-full mb-1 ${
+            rateColors[label] || "bg-gray-200"
+          }`}
+        ></div>
+        <div className="text-xs font-bold">{label}</div>
+        <div className="text-xs">{count}語</div>
+        <div className="w-12 h-4 bg-gray-200 rounded-full mt-1">
+          <div
+            className={`${
+              rateColors[label] || "bg-gray-200"
+            } h-4 rounded-full`}
+            style={{ width: `${total ? (count / total) * 100 : 0}%` }}
+          ></div>
+        </div>
       </div>
+    );
+  })}
+</div>
+      
       <h2 className="text-xl font-bold mt-6 mb-2 text-indigo-700">
         最近間違えた単語（7日以内）
       </h2>

@@ -19,7 +19,7 @@ export default function Home() {
           <span className="text-gray-500 text-center">
             登録済みの単語を確認・編集
           </span>
-          <button className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition">
+          <button className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">
             開く
           </button>
         </Link>
@@ -33,7 +33,7 @@ export default function Home() {
           <span className="text-gray-500 text-center">
             ランダム出題で実力チェック
           </span>
-          <button className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition">
+          <button className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">
             挑戦する
           </button>
         </Link>
@@ -45,7 +45,7 @@ export default function Home() {
           <span className="text-gray-500 text-center">
             学習状況・統計を確認
           </span>
-          <button className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition">
+          <button className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">
             見る
           </button>
         </Link>
