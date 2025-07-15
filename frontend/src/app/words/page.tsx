@@ -1,6 +1,3 @@
-// ※ このファイルを利用するには 'react' および '@types/react' の依存が必要です。
-//   例: npm install react react-dom @types/react @types/react-dom
-
 "use client";
 
 import * as React from "react";

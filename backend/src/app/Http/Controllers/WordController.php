@@ -6,6 +6,8 @@ use App\Models\Word;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
+use App\Http\Requests\StoreWordRequest;
+use App\Http\Requests\UpdateWordRequest;
 
 class WordController extends Controller
 {
@@ -62,34 +64,18 @@ class WordController extends Controller
     /**
      * 新しい単語を作成
      */
-    public function store(Request $request): JsonResponse
+    public function store(StoreWordRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'word' => 'required|string|max:255|unique:words',
-            'meaning' => 'required|string|max:255',
-            'part_of_speech' => 'required|string|max:50',
-            'example_sentence' => 'nullable|string|max:1000',
-        ]);
-
-        $word = Word::create($validated);
-
+        $word = Word::create($request->validated());
         return response()->json($word, 201);
     }
 
     /**
      * 単語を更新
      */
-    public function update(Request $request, Word $word): JsonResponse
+    public function update(UpdateWordRequest $request, Word $word): JsonResponse
     {
-        $validated = $request->validate([
-            'word' => ['required', 'string', 'max:255', Rule::unique('words')->ignore($word->id)],
-            'meaning' => 'required|string|max:255',
-            'part_of_speech' => 'required|string|max:50',
-            'example_sentence' => 'nullable|string|max:1000',
-        ]);
-
-        $word->update($validated);
-
+        $word->update($request->validated());
         return response()->json($word);
     }
 
