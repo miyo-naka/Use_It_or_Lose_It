@@ -73,7 +73,7 @@ export default function WordsPage() {
           <h1 className="text-2xl font-bold text-indigo-700">単語一覧</h1>
           <button
             onClick={() => openModal("add")}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-full font-semibold shadow hover:bg-indigo-700 transition"
+            className="px-4 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition"
           >
             ＋ 単語追加
           </button>
@@ -109,13 +109,13 @@ export default function WordsPage() {
                   <td className="px-3 py-2 flex gap-2">
                     <button
                       onClick={() => openModal("edit", word)}
-                      className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition text-xs"
+                      className="px-3 py-1 bg-indigo-400 text-white rounded hover:bg-indigo-500 transition text-xs"
                     >
                       編集
                     </button>
                     <button
                       onClick={() => openModal("delete", word)}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition text-xs"
+                      className="px-3 py-1 bg-rose-400 text-white rounded hover:bg-rose-500 transition text-xs"
                     >
                       削除
                     </button>

@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-cyan-50/30 text-gray-900">
         <header className="w-full shadow bg-white/80 sticky top-0 z-10">
           <nav className="max-w-3xl mx-auto flex gap-4 px-4 py-3 items-center">
-            <span className="font-bold text-xl tracking-tight mr-6 text-indigo-700">
+            <span className="font-bold text-xl tracking-tight mr-12 text-indigo-700">
               Use It or Lose It
             </span>
             {navItems.map((item) => (
