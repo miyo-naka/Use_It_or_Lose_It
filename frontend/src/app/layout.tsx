@@ -23,7 +23,7 @@ export default function RootLayout({
         <header className="w-full shadow bg-white/80 sticky top-0 z-10">
           <nav className="max-w-3xl mx-auto flex gap-4 px-4 py-3 items-center">
             <span className="font-bold text-xl tracking-tight mr-6 text-indigo-700">
-              Use It Or Lose It
+              Use It or Lose It
             </span>
             {navItems.map((item) => (
               <Link

@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <section className="w-full flex flex-col items-center justify-center gap-10 mt-16">
       <h1 className="text-4xl font-extrabold text-indigo-700 mb-8 drop-shadow">
-        Use It Or Lose It
+        Use It or Lose It
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-2xl">
         <Link
