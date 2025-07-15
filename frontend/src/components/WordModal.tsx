@@ -69,10 +69,9 @@ export default function WordModal({ isOpen, onClose, mode, word, onSuccess }: Mo
           method: 'DELETE',
         });
       }
-      
       onSuccess();
       onClose();
-    } catch (err) {
+    } catch (err:unknown) {
       setError(err.message || 'エラーが発生しました');
     } finally {
       setLoading(false);

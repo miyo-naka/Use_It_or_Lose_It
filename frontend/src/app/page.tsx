@@ -1,54 +1,37 @@
 "use client";
+import HomeNavCard from "@/components/HomeNavCard";
 
-import Link from "next/link";
+const navCards = [
+  {
+    href: "/words",
+    title: "単語一覧",
+    description: "登録済みの単語を確認・編集",
+    buttonLabel: "開く",
+  },
+  {
+    href: "/quiz",
+    title: "クイズ",
+    description: "ランダム出題で実力チェック",
+    buttonLabel: "挑戦する",
+  },
+  {
+    href: "/progress",
+    title: "進捗",
+    description: "学習状況・統計を確認",
+    buttonLabel: "見る",
+  },
+];
 
 export default function Home() {
   return (
     <section className="w-full flex flex-col items-center justify-center gap-10 mt-16">
       <h1 className="text-4xl font-extrabold text-indigo-700 mb-8 drop-shadow">
-        Use It or Lose It
+        Use It Or Lose It
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 w-full max-w-2xl">
-        <Link
-          href="/words"
-          className="group bg-white rounded-full shadow-xl p-8 flex flex-col items-center hover:bg-indigo-50 transition"
-        >
-          <span className="text-2xl font-bold text-indigo-600 mb-2">
-            単語一覧
-          </span>
-          <span className="text-gray-500 text-center">
-            登録済みの単語を確認・編集
-          </span>
-          <button className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">
-            開く
-          </button>
-        </Link>
-        <Link
-          href="/quiz"
-          className="group bg-white rounded-full shadow-xl p-8 flex flex-col items-center hover:bg-indigo-50 transition"
-        >
-          <span className="text-2xl font-bold text-indigo-600 mb-2">
-            クイズ
-          </span>
-          <span className="text-gray-500 text-center">
-            ランダム出題で実力チェック
-          </span>
-          <button className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">
-            挑戦する
-          </button>
-        </Link>
-        <Link
-          href="/progress"
-          className="group bg-white rounded-full shadow-xl p-8 flex flex-col items-center hover:bg-indigo-50 transition"
-        >
-          <span className="text-2xl font-bold text-indigo-600 mb-2">進捗</span>
-          <span className="text-gray-500 text-center">
-            学習状況・統計を確認
-          </span>
-          <button className="mt-4 px-6 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition">
-            見る
-          </button>
-        </Link>
+        {navCards.map((card) => (
+          <HomeNavCard key={card.href} {...card} />
+        ))}
       </div>
     </section>
   );
