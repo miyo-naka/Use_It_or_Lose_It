@@ -26,6 +26,7 @@ Route::prefix('words')->group(function () {
     Route::get('/stats', [WordController::class, 'stats']);
     Route::get('/{word}', [WordController::class, 'show']);
     Route::post('/', [WordController::class, 'store']);
+    Route::post('/import', [WordController::class, 'importCsv']);
     Route::put('/{word}', [WordController::class, 'update']);
     Route::delete('/{word}', [WordController::class, 'destroy']);
 });
