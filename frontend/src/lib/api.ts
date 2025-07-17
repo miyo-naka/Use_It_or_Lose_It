@@ -17,10 +17,17 @@ export async function apiFetch<T>(path: string, options?: RequestInit): Promise<
   return res.json();
 }
 
-// 単語一覧取得
-export async function fetchWords(): Promise<Word[]> {
-  const res = await apiFetch<{ data: Word[] }>('/words');
-  return res.data;
+export type PaginatedResponse<T> = {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+};
+
+// 単語一覧取得（ページネーション対応）
+export async function fetchWords(page: number = 1): Promise<PaginatedResponse<Word>> {
+  return apiFetch<PaginatedResponse<Word>>(`/words?page=${page}`);
 }
 
 // 単語追加

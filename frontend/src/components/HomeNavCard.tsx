@@ -12,7 +12,7 @@ export default function HomeNavCard({ href, title, description, buttonLabel }: P
   return (
     <Link
       href={href}
-      className="group bg-white rounded-xl shadow-lg p-8 flex flex-col items-center hover:bg-indigo-50 transition"
+      className="group bg-white rounded-full shadow-lg p-8 flex flex-col items-center hover:bg-indigo-50 transition"
     >
       <span className="text-2xl font-bold text-indigo-600 mb-2">{title}</span>
       <span className="text-gray-500">{description}</span>
