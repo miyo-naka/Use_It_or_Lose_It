@@ -26,8 +26,17 @@ export type PaginatedResponse<T> = {
 };
 
 // 単語一覧取得（ページネーション対応）
-export async function fetchWords(page: number = 1): Promise<PaginatedResponse<Word>> {
-  return apiFetch<PaginatedResponse<Word>>(`/words?page=${page}`);
+export async function fetchWords(
+  page: number = 1,
+  sortBy: string = 'created_at',
+  sortOrder: 'asc' | 'desc' = 'asc'
+): Promise<PaginatedResponse<Word>> {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    sort_by: sortBy,
+    sort_order: sortOrder,
+  });
+  return apiFetch<PaginatedResponse<Word>>(`/words?${params.toString()}`);
 }
 
 // 単語追加
