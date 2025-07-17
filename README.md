@@ -14,6 +14,18 @@
 
 ---
 
+## 各ページ
+<kbd><img width="500" height="400" alt="home" src="https://github.com/user-attachments/assets/0d5ea123-00b4-4e72-b931-7eac0a8bfe1f" /></kbd>
+
+<kbd><img width="500" height="400" alt="word" src="https://github.com/user-attachments/assets/15e89fec-8166-4841-af9a-629442b4952c" /></kbd>
+
+<kbd><img width="500" height="400" alt="quiz" src="https://github.com/user-attachments/assets/11d199e3-6cb6-4db8-8e67-63d1d3548101" /></kbd>
+
+<kbd><img width="500" height="400" alt="progress" src="https://github.com/user-attachments/assets/48469b96-14ec-4315-a9ee-a9c7c630b650" /></kbd>
+
+
+---
+
 ## 使用技術
 
 - バックエンド：Laravel 10
