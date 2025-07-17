@@ -32,16 +32,34 @@ class WordController extends Controller
             $query->where('part_of_speech', $request->get('part_of_speech'));
         }
 
-        // 正解率でソート
-        if ($request->has('sort_by_correct_rate')) {
-            $query->withCount(['mistakes as total_attempts'])
-                  ->withCount(['mistakes as correct_attempts' => function ($q) {
-                      $q->where('correct', true);
-                  }]);
+        // ソート機能
+        $sortBy = $request->get('sort_by', 'created_at'); // デフォルトは登録日
+        $sortOrder = $request->get('sort_order', 'desc'); // デフォルトは降順
+
+        switch ($sortBy) {
+            case 'word':
+                // ABC順（単語名）
+                $query->orderBy('word', $sortOrder);
+                break;
+            case 'part_of_speech':
+                // 品詞順
+                $query->orderBy('part_of_speech', $sortOrder);
+                break;
+            case 'created_at':
+                // 登録日順
+                $query->orderBy('created_at', $sortOrder);
+                break;
+            case 'updated_at':
+                // 更新日順
+                $query->orderBy('updated_at', $sortOrder);
+                break;
+            default:
+                // デフォルトは登録日降順
+                $query->orderBy('created_at', 'desc');
+                break;
         }
 
         $words = $query->with('mistakes')
-                      ->orderBy('created_at', 'desc')
                       ->paginate(20);
 
         return response()->json($words);

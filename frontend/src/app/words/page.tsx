@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React from "react";
 import { fetchWords, PaginatedResponse } from "@/lib/api";
 import { Word } from "@/types/word";
 import WordModal from "@/components/WordModal";
@@ -13,12 +13,26 @@ type ModalState = {
   word?: Word;
 };
 
+type SortOption = {
+  value: string;
+  label: string;
+};
+
+const sortOptions: SortOption[] = [
+  { value: "created_at", label: "登録日順" },
+  { value: "word", label: "ABC順" },
+  { value: "part_of_speech", label: "品詞順" },
+  { value: "updated_at", label: "更新日順" },
+];
+
 export default function WordsPage() {
   const [words, setWords] = React.useState<Word[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [currentPage, setCurrentPage] = React.useState(1);
   const [totalPages, setTotalPages] = React.useState(1);
+  const [sortBy, setSortBy] = React.useState("created_at");
+  const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
   const [modalState, setModalState] = React.useState<ModalState>({
     isOpen: false,
     mode: "add",
@@ -27,7 +41,7 @@ export default function WordsPage() {
   const fetchWordsData = React.useCallback(async (page: number = 1) => {
     try {
       setLoading(true);
-      const res: PaginatedResponse<Word> = await fetchWords(page);
+      const res: PaginatedResponse<Word> = await fetchWords(page, sortBy, sortOrder);
       setWords(res.data);
       setCurrentPage(res.current_page);
       setTotalPages(res.last_page);
@@ -40,7 +54,7 @@ export default function WordsPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [sortBy, sortOrder]);
 
   React.useEffect(() => {
     fetchWordsData(1);
@@ -69,6 +83,17 @@ export default function WordsPage() {
     fetchWordsData(page);
   };
 
+  const handleSortChange = (newSortBy: string) => {
+    if (newSortBy === sortBy) {
+      // 同じソート項目の場合は順序を切り替え
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    } else {
+      // 新しいソート項目の場合は降順で開始
+      setSortBy(newSortBy);
+      setSortOrder("desc");
+    }
+  };
+
   return (
     <>
       <section className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8 mt-8">
@@ -81,6 +106,29 @@ export default function WordsPage() {
             ＋ 単語追加
           </button>
         </div>
+
+        {/* ソート機能 */}
+        <div className="mb-4 flex flex-wrap gap-2">
+          {sortOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => handleSortChange(option.value)}
+              className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+                sortBy === option.value
+                  ? "bg-indigo-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {option.label}
+              {sortBy === option.value && (
+                <span className="ml-1">
+                  {sortOrder === "asc" ? "↑" : "↓"}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
         {loading && <LoadingSpinner />}
         {error && <div className="text-red-500">{error}</div>}
         {!loading && !error && (
