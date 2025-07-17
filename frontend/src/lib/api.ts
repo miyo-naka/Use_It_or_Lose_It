@@ -58,4 +58,26 @@ export async function updateWord(id: number, data: Omit<Word, 'id' | 'created_at
 // 単語削除
 export async function deleteWord(id: number): Promise<void> {
   await apiFetch(`/words/${id}`, { method: 'DELETE' });
+}
+
+// CSVインポート
+export async function importCsv(file: File): Promise<{
+  message: string;
+  imported_count: number;
+  errors: string[];
+  total_errors: number;
+}> {
+  const formData = new FormData();
+  formData.append('csv_file', file);
+
+  const res = await fetch(`${API_BASE_URL}/words/import`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    throw new Error(await res.text());
+  }
+
+  return res.json();
 } 

@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
 use App\Http\Requests\StoreWordRequest;
 use App\Http\Requests\UpdateWordRequest;
+use Illuminate\Support\Facades\Storage;
 
 class WordController extends Controller
 {
@@ -121,5 +122,96 @@ class WordController extends Controller
             'words_with_mistakes' => $wordsWithMistakes,
             'average_correct_rate' => round($averageCorrectRate, 2),
         ]);
+    }
+
+    /**
+     * CSVファイルから単語を一括インポート
+     */
+    public function importCsv(Request $request): JsonResponse
+    {
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048', // 2MB制限
+        ]);
+
+        $file = $request->file('csv_file');
+        $path = $file->store('temp');
+        $fullPath = Storage::path($path);
+
+        try {
+            $importedCount = 0;
+            $errors = [];
+            $lineNumber = 0;
+
+            if (($handle = fopen($fullPath, 'r')) !== false) {
+                // ヘッダー行をスキップ
+                $header = fgetcsv($handle);
+                $lineNumber++;
+
+                while (($data = fgetcsv($handle)) !== false) {
+                    $lineNumber++;
+                    
+                    // CSVの列数チェック（word, meaning, part_of_speech, example_sentence）
+                    if (count($data) < 3) {
+                        $errors[] = "行 {$lineNumber}: 列数が不足しています（最低3列必要）";
+                        continue;
+                    }
+
+                    try {
+                        $wordData = [
+                            'word' => trim($data[0]),
+                            'meaning' => trim($data[1]),
+                            'part_of_speech' => trim($data[2]),
+                            'example_sentence' => isset($data[3]) ? trim($data[3]) : '',
+                        ];
+
+                        // バリデーション
+                        $validator = \Validator::make($wordData, [
+                            'word' => 'required|string|max:255',
+                            'meaning' => 'required|string|max:255',
+                            'part_of_speech' => 'required|string|max:50',
+                            'example_sentence' => 'nullable|string|max:500',
+                        ]);
+
+                        if ($validator->fails()) {
+                            $errors[] = "行 {$lineNumber}: " . implode(', ', $validator->errors()->all());
+                            continue;
+                        }
+
+                        // 重複チェック
+                        $existingWord = Word::where('word', $wordData['word'])->first();
+                        if ($existingWord) {
+                            $errors[] = "行 {$lineNumber}: 単語{$wordData['word']}' は既に存在します";
+                            continue;
+                        }
+
+                        Word::create($wordData);
+                        $importedCount++;
+
+                    } catch (\Exception $e) {
+                        $errors[] = "行 {$lineNumber}: 処理中にエラーが発生しました - " . $e->getMessage();
+                    }
+                }
+                fclose($handle);
+            }
+
+            // 一時ファイルを削除
+            Storage::delete($path);
+
+            return response()->json([
+                'message' => "インポートが完了しました",
+                'imported_count' => $importedCount,
+                'errors' => $errors,
+                'total_errors' => count($errors),
+            ]);
+
+        } catch (\Exception $e) {
+            // 一時ファイルを削除
+            Storage::delete($path);
+            
+            return response()->json([
+                'message' => "CSVファイルの処理中にエラーが発生しました",
+                'error' => $e->getMessage(),
+            ], 500);
+        }
     }
 } 
