@@ -4,14 +4,20 @@
 （Laravel + Next.js + MySQL）
 
 ---
+## 主な機能
 
-## 概要
+- **単語管理**：単語の追加・編集・削除・CSV一括インポート
+- **クイズ**：ランダム出題、正解/不正解の記録
+- **進捗表示**：正解率・間違い回数・最近の間違い単語など
+- **ソート・検索・ページネーション**：単語一覧で利用可能
+- **UIはNext.js（React + Tailwind CSS）**
 
-- **単語の登録・編集・削除・一括CSVインポート**
-- **クイズ機能**（ランダム出題、正解率・間違い履歴の記録）
-- **進捗・統計表示**
-- **間違い回数・頻度の可視化**
-- **UIはNext.js（React + Tailwind CSS）でモダン＆レスポンシブ**
+---
+
+## 使用技術
+
+- バックエンド：Laravel 10
+- フロントエンド：Next.js 15, TypeScript, Tailwind CSS
 
 ---
 
@@ -19,17 +25,19 @@
 
 ```
 UseItOrLoseIt/
-  backend/   # Laravel APIサーバー
-  frontend/  # Next.js フロントエンド
-  docker/    # MySQL, nginx等の設定
+  backend/   
+  frontend/  
+  docker/    
   docker-compose.yml
 ```
 
 ---
 
+
+
 ## セットアップ
 
-### 1. Dockerで一括起動（推奨）
+### 1. Dockerで一括起動
 
 ```sh
 docker-compose up --build
@@ -60,15 +68,6 @@ npm run dev
 
 ---
 
-## 主な機能
-
-- **単語管理**：単語の追加・編集・削除・CSV一括インポート
-- **クイズ**：ランダム出題、正解/不正解の記録
-- **進捗表示**：正解率・間違い回数・最近の間違い単語など
-- **ソート・検索・ページネーション**：単語一覧で利用可能
-
----
-
 ## CSVインポートについて
 
 - メニューから「CSVインポート」ボタンでファイル選択
@@ -82,22 +81,5 @@ npm run dev
   study,勉強する,verb,I study English every day.
   ```
 
----
 
-## 開発・カスタマイズ
 
-- バックエンド：`backend/`（Laravel 10+）
-- フロントエンド：`frontend/`（Next.js 14+, TypeScript, Tailwind CSS）
-- 型定義・APIクライアント・UIコンポーネントは`frontend/src/types`や`frontend/src/components`参照
-
----
-
-## ライセンス
-
-MIT
-
----
-
-## Author
-
-- [Your Name or Team]
