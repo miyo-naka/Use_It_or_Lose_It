@@ -6,6 +6,8 @@ import { Word } from "@/types/word";
 import WordModal from "@/components/WordModal";
 import Pagination from "@/components/Pagination";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import CsvImport, { CsvImportResult } from "@/components/CsvImport";
+import SortButtons from "@/components/SortButtons";
 
 type ModalState = {
   isOpen: boolean;
@@ -13,12 +15,7 @@ type ModalState = {
   word?: Word;
 };
 
-type SortOption = {
-  value: string;
-  label: string;
-};
-
-const sortOptions: SortOption[] = [
+const sortOptions = [
   { value: "created_at", label: "登録日順" },
   { value: "word", label: "ABC順" },
   { value: "part_of_speech", label: "品詞順" },
@@ -34,12 +31,7 @@ export default function WordsPage() {
   const [sortBy, setSortBy] = React.useState("created_at");
   const [sortOrder, setSortOrder] = React.useState<"asc" | "desc">("desc");
   const [importing, setImporting] = React.useState(false);
-  const [importResult, setImportResult] = React.useState<{
-    message: string;
-    imported_count: number;
-    errors: string[];
-    total_errors: number;
-  } | null>(null);
+  const [importResult, setImportResult] = React.useState<CsvImportResult | null>(null);
   const [modalState, setModalState] = React.useState<ModalState>({
     isOpen: false,
     mode: "add",
@@ -83,7 +75,7 @@ export default function WordsPage() {
   };
 
   const handleSuccess = () => {
-    fetchWordsData(currentPage); // 現在のページを再取得
+    fetchWordsData(currentPage);
   };
 
   const handlePageChange = (page: number) => {
@@ -92,88 +84,49 @@ export default function WordsPage() {
 
   const handleSortChange = (newSortBy: string) => {
     if (newSortBy === sortBy) {
-      // 同じソート項目の場合は順序を切り替え
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      // 新しいソート項目の場合は降順で開始
       setSortBy(newSortBy);
       setSortOrder("desc");
     }
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.item(0);
-    if (!file) return;
-
+  // CSVインポート用
+  const handleImport = async (file: File) => {
+    setImporting(true);
+    setImportResult(null);
+    setError(null);
     try {
-      setImporting(true);
-      setImportResult(null);
-      setError(null);
-
       const result = await importCsv(file);
       setImportResult(result);
-
-      // インポート成功時は現在のページを再取得
       if (result.imported_count > 0) {
         fetchWordsData(currentPage);
       }
-    } catch (e: unknown) {
-      if (e instanceof Error) {
-        setError(e.message);
-      } else {
-        setError("インポート中にエラーが発生しました");
-      }
+      return result;
+    } catch (e: any) {
+      setError(e.message || "インポート中にエラーが発生しました");
+      throw e;
     } finally {
       setImporting(false);
-      // ファイル入力をリセット
-      event.target.value = "";
     }
-  };
-
-  const downloadCsvTemplate = () => {
-    const csvContent = "単語,意味,品詞,例文\nhello,こんにちは,noun,Hello, how are you?\nworld,世界,noun,The world is beautiful.\nstudy,勉強する,verb,I study English every day.";
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
-    const link = document.createElement("a");
-    const url = URL.createObjectURL(blob);
-    link.setAttribute("href", url);
-    link.setAttribute("download", "words_template.csv");
-    link.style.visibility = "hidden";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   return (
     <>
       <section className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8 mt-8">
-        
-          <h1 className="text-2xl font-bold text-indigo-700 mb-8">単語一覧</h1>
+        <h1 className="text-2xl font-bold text-indigo-700 mb-8">単語一覧</h1>
         <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-2">
-            
-            <label className="px-4 py-2 bg-green-500 text-white rounded-full font-semibold shadow hover:bg-green-600 transition cursor-pointer">
-              📁 CSVインポート
-              <input
-                type="file"
-                accept=".csv,.txt"
-                onChange={handleFileUpload}
-                className="hidden"
-                disabled={importing}
-              />
-            </label>
-            <button
-              onClick={downloadCsvTemplate}
-              className="px-4 py-2 bg-gray-500 text-white rounded-full font-semibold shadow hover:bg-gray-600 transition"
-            >
-              テンプレート
-            </button>
-            <button
-              onClick={() => openModal("add")}
-              className="px-4 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition"
-            >
-              ＋ 単語追加
-            </button>
-          </div>
+          <CsvImport
+            onImport={handleImport}
+            loading={importing}
+            result={importResult}
+          />
+          <button
+            onClick={() => openModal("add")}
+            className="px-4 py-2 bg-indigo-500 text-white rounded-full font-semibold shadow hover:bg-indigo-600 transition"
+          >
+            ＋ 単語追加
+          </button>
         </div>
 
         {/* インポート結果表示 */}
@@ -221,26 +174,12 @@ export default function WordsPage() {
         )}
 
         {/* ソート機能 */}
-        <div className="mb-4 flex flex-wrap gap-2">
-          {sortOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => handleSortChange(option.value)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition ${
-                sortBy === option.value
-                  ? "bg-indigo-500 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              {option.label}
-              {sortBy === option.value && (
-                <span className="ml-1">
-                  {sortOrder === "asc" ? "↑" : "↓"}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+        <SortButtons
+          sortBy={sortBy}
+          sortOrder={sortOrder}
+          onSortChange={handleSortChange}
+          options={sortOptions}
+        />
 
         {loading && <LoadingSpinner />}
         {error && <div className="text-red-500">{error}</div>}
@@ -261,8 +200,7 @@ export default function WordsPage() {
                   {words.map((word, i) => (
                     <tr
                       key={word.id}
-                      className={`border
-                        ${i % 2 === 0 ? "bg-white" : "bg-indigo-50/50"}`}
+                      className={`border ${i % 2 === 0 ? "bg-white" : "bg-indigo-50/50"}`}
                     >
                       <td className="border px-3 py-2 font-semibold text-indigo-700">
                         {word.word}
